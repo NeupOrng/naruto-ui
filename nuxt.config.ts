@@ -1,10 +1,11 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  server: {
-    port: 8080 // specify the port here
-  },
   css: ['~~/assets/css/main.css'],
-  modules: ['@element-plus/nuxt'],
+  modules: [
+    '@element-plus/nuxt',
+    '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt'
+  ],
   elementPlus: {
   },
   postcss: {
@@ -13,4 +14,5 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
+  plugins: ['plugins/authMiddleware']
 })
