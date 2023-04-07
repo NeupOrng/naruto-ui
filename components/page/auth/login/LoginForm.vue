@@ -15,7 +15,7 @@
         </el-input>
       </el-form-item>
       <div class="w-full flex items-center justify-center">
-        <el-button type="primary" @click="onSubmit(formInstance)">Sign In</el-button>
+        <el-button type="primary" :loading="isLoading" @click="onSubmit(formInstance)">Sign In</el-button>
       </div>
     </el-form>
   </div>
@@ -34,6 +34,7 @@ export default defineComponent({
     const loginModel = ref<LoginRequest>(new LoginRequest());
     const formInstance = ref<FormInstance>();
     const authStore = useAuthStore();
+    const isLoading = ref(false);
 
     console.log(authStore.GetToken);
 
@@ -42,6 +43,7 @@ export default defineComponent({
       Password: { required: true }
     };
     const submit = async () => {
+      isLoading.value = true;
       const response = await apiCalling.Login(loginModel.value.GetLoginRequest);
       if (response.data.ErrorCode !== 200) {
         notification(response.data.Message, enumMessageStatus.Error);
@@ -50,6 +52,7 @@ export default defineComponent({
         notification(response.data.Message, enumMessageStatus.Success);
         console.log(authStore.GetToken);
       }
+      isLoading.value = false;
     }
     const onSubmit = formHelper.getSubmitFunction(submit);
 
@@ -59,7 +62,8 @@ export default defineComponent({
       formInstance,
       formRules: formHelper.getRules(rules),
       onSubmit,
-      isShowPassword
+      isShowPassword,
+      isLoading
     }
   },
 });

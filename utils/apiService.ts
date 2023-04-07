@@ -1,5 +1,6 @@
 import axios, { Axios, AxiosInstance } from "axios";
-import { IAxiosApiResponse } from "~~/models/baseApiResponse";
+import { error } from "console";
+import { IAxiosApiResponse, IBaseApiResponse } from "~~/models/baseApiResponse";
 import { ILoginRequest } from "~~/models/request/auth/loginRequest";
 import { ISignUpRequest } from "~~/models/request/auth/signUpRequest";
 import { IUserResponseDto } from "~~/models/response/auth/userResponse.dto";
@@ -20,11 +21,31 @@ const getAxiosInstance = (isAuth: boolean = true): AxiosInstance => {
     headers['Authorization'] = `Bearer ${authStore.GetToken}`;
   }
 
-  return axios.create({
+  const instance = axios.create({
     baseURL: baseUrl,
     timeout: 5000,
     headers
-  })
+  });
+
+  instance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      console.log(error);
+      
+      const dataResponse: IBaseApiResponse<null> = {
+        Message: error.message,
+        ErrorCode: 500,
+        Data: null
+      };
+      const response: IAxiosApiResponse<null> = {
+        data: dataResponse
+      };
+
+      return response;
+    }
+  )
+
+  return instance;
 }
 
 const apiCalling = {
